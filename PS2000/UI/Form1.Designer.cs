@@ -55,10 +55,13 @@
             this.tbx_set_watt = new System.Windows.Forms.TextBox();
             this.btn_set_watt = new System.Windows.Forms.Button();
             this.tbx_get_watt = new System.Windows.Forms.TextBox();
+            this.gbx_power = new System.Windows.Forms.GroupBox();
+            this.rdi_power_enabled = new System.Windows.Forms.RadioButton();
             this.grp_device_info.SuspendLayout();
             this.grp_remote.SuspendLayout();
             this.grp_volt.SuspendLayout();
             this.grp_watt.SuspendLayout();
+            this.gbx_power.SuspendLayout();
             this.SuspendLayout();
             // 
             // lbl_serialno
@@ -267,7 +270,7 @@
             this.grp_volt.Controls.Add(this.tbx_set_volt);
             this.grp_volt.Controls.Add(this.btn_set_volt);
             this.grp_volt.Controls.Add(this.tbx_get_volt);
-            this.grp_volt.Location = new System.Drawing.Point(12, 347);
+            this.grp_volt.Location = new System.Drawing.Point(12, 433);
             this.grp_volt.Name = "grp_volt";
             this.grp_volt.Size = new System.Drawing.Size(335, 97);
             this.grp_volt.TabIndex = 30;
@@ -280,7 +283,7 @@
             this.grp_watt.Controls.Add(this.tbx_set_watt);
             this.grp_watt.Controls.Add(this.btn_set_watt);
             this.grp_watt.Controls.Add(this.tbx_get_watt);
-            this.grp_watt.Location = new System.Drawing.Point(12, 450);
+            this.grp_watt.Location = new System.Drawing.Point(12, 536);
             this.grp_watt.Name = "grp_watt";
             this.grp_watt.Size = new System.Drawing.Size(335, 97);
             this.grp_watt.TabIndex = 31;
@@ -322,11 +325,35 @@
             this.tbx_get_watt.Size = new System.Drawing.Size(100, 23);
             this.tbx_get_watt.TabIndex = 7;
             // 
+            // gbx_power
+            // 
+            this.gbx_power.Controls.Add(this.rdi_power_enabled);
+            this.gbx_power.Location = new System.Drawing.Point(12, 347);
+            this.gbx_power.Name = "gbx_power";
+            this.gbx_power.Size = new System.Drawing.Size(335, 65);
+            this.gbx_power.TabIndex = 30;
+            this.gbx_power.TabStop = false;
+            this.gbx_power.Text = "Power output";
+            // 
+            // rdi_power_enabled
+            // 
+            this.rdi_power_enabled.AutoSize = true;
+            this.rdi_power_enabled.Location = new System.Drawing.Point(244, 22);
+            this.rdi_power_enabled.Name = "rdi_power_enabled";
+            this.rdi_power_enabled.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.rdi_power_enabled.Size = new System.Drawing.Size(67, 19);
+            this.rdi_power_enabled.TabIndex = 10;
+            this.rdi_power_enabled.TabStop = true;
+            this.rdi_power_enabled.Text = "Enabled";
+            this.rdi_power_enabled.UseVisualStyleBackColor = true;
+            this.rdi_power_enabled.CheckedChanged += new System.EventHandler(this.rdi_power_enabled_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(363, 565);
+            this.ClientSize = new System.Drawing.Size(363, 644);
+            this.Controls.Add(this.gbx_power);
             this.Controls.Add(this.grp_watt);
             this.Controls.Add(this.grp_volt);
             this.Controls.Add(this.grp_remote);
@@ -341,6 +368,8 @@
             this.grp_volt.PerformLayout();
             this.grp_watt.ResumeLayout(false);
             this.grp_watt.PerformLayout();
+            this.gbx_power.ResumeLayout(false);
+            this.gbx_power.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -374,5 +403,7 @@
         private TextBox tbx_set_watt;
         private Button btn_set_watt;
         private TextBox tbx_get_watt;
+        private GroupBox gbx_power;
+        private RadioButton rdi_power_enabled;
     }
 }

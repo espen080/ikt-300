@@ -151,6 +151,27 @@ namespace UI
             return responseTelegram[3] == 0;
         }
 
+        static bool EnablePowerOut()
+        {
+            var telegram = Telegram(
+                sd: StartDelimiter(MessageType.Send, Direction.ToDevice, 1),
+                obj: Object.PowerSupplyControl,
+                data: new byte[] { 0x01, 0x01 }
+            );
+            var responseTelegram = sendTelegram(telegram);
+            return responseTelegram[3] == 0;
+        }
+
+        static bool DisablePowerOut()
+        {
+            var telegram = Telegram(
+                sd: StartDelimiter(MessageType.Send, Direction.ToDevice, 1),
+                obj: Object.PowerSupplyControl,
+                data: new byte[] { 0x01, 0x00 }
+            );
+            var responseTelegram = sendTelegram(telegram);
+            return responseTelegram[3] == 0;
+        }
 
         private void set_voltage()
         {
@@ -337,21 +358,30 @@ namespace UI
 
         private void remote_control_CheckedChanged(object sender, EventArgs e)
         {
-            //bool success = radioButton1.Checked ? EnableRemoteControl() : EnableManualControl();
+            //bool success = rdi_remote_enabled.Checked ? EnableRemoteControl() : EnableManualControl();
             //if (!success)
             //{
-            //    radioButton1.Checked = !radioButton1.Checked;
+                //rdi_remote_enabled.Checked = !rdi_remote_enabled.Checked;
             //}
         }
 
         private void btn_get_watt_Click(object sender, EventArgs e)
         {
-
+            tbx_get_watt.Text = "loading watt";
         }
 
         private void btn_set_watt_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void rdi_power_enabled_CheckedChanged(object sender, EventArgs e)
+        {
+            //bool success = rdi_power_enabled.Checked ? EnablePowerOut() : DisablePowerOut();
+            //if (!success)
+            //{
+            //    rdi_power_enabled.Checked = !rdi_power_enabled.Checked;
+            //}
         }
     }
 }
