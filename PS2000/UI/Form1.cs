@@ -7,10 +7,26 @@ namespace UI
         public Form1()
         {
             InitializeComponent();
-            //this.textBox1.Text = get_serialnumber();
-            //this.textBox2.Text = get_nominal_voltage();
+            LoadDeviceType();
+            //LoadSerialNumber();
+            //LoadNominalVoltage;
+            LoadNominalWatt();
+            LoadArticeNo();
+            LoadManufacturer();
+            LoadSoftwareVersion();
+
         }
-        static string get_serialnumber()
+
+        void LoadDeviceType()
+        {
+            var telegram = Telegram(
+                sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 15),
+                obj: Object.DeviceType
+            );
+            tbx_device_type.Text = "device";
+        }
+
+        void LoadSerialNumber()
         {
             var telegram = Telegram(
                 sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 15),
@@ -31,32 +47,10 @@ namespace UI
                 }
             }
 
-            return serialNumberString;
+            tbx_serialno.Text = serialNumberString;
         }
 
-        static bool EnableRemoteControl()
-        {
-            var telegram = Telegram(
-                sd: StartDelimiter(MessageType.Send, Direction.ToDevice, 1),
-                obj: Object.PowerSupplyControl,
-                data: new byte[] { 0x10, 0x10 }
-            );
-            var responseTelegram = sendTelegram(telegram);
-            return responseTelegram[3] == 0;
-        }
-
-        static bool EnableManualControl()
-        {
-            var telegram = Telegram(
-                sd: StartDelimiter(MessageType.Send, Direction.ToDevice, 1),
-                obj: Object.PowerSupplyControl,
-                data: new byte[] { 0x10, 0x00 }
-            );
-            var responseTelegram = sendTelegram(telegram);
-            return responseTelegram[3] == 0;
-        }
-
-        static string get_nominal_voltage()
+        void LoadNominalVoltage()
         {
             double volt;
             int percentVolt = 0;
@@ -88,16 +82,75 @@ namespace UI
             if (voltageResponseTelegram == null)
             {
                 Console.WriteLine("No telegram was read");
-                return "";
+                tbx_nom_volt.Text = "";
             }
             else
             {
                 byte[] byteArray = { voltageResponseTelegram[6], voltageResponseTelegram[5], voltageResponseTelegram[4], voltageResponseTelegram[3] };
                 nominalVoltage = BitConverter.ToSingle(byteArray, 0);
                 volt = (double)percentVolt * nominalVoltage / 25600;
-                return volt.ToString();
+                tbx_nom_volt.Text = volt.ToString();
             }
         }
+
+        void LoadNominalWatt()
+        {
+            var telegram = Telegram(
+                sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 3),
+                obj: Object.NominalWatt
+            );
+            tbx_nom_watt.Text = "watt";
+        }
+
+        void LoadArticeNo()
+        {
+            var telegram = Telegram(
+                sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 15),
+                obj: Object.DeviceArticleNo
+            );
+            tbx_articleno.Text = "article";
+        }
+
+        void LoadManufacturer()
+        {
+            var telegram = Telegram(
+                sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 15),
+                obj: Object.Manufacturer
+            );
+            tbx_manufacturer.Text = "manufacturer";
+        }
+
+        void LoadSoftwareVersion()
+        {
+            var telegram = Telegram(
+                sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 15),
+                obj: Object.SoftwareVersion
+            );
+            tbx_version.Text = "sft version";
+        }
+
+        static bool EnableRemoteControl()
+        {
+            var telegram = Telegram(
+                sd: StartDelimiter(MessageType.Send, Direction.ToDevice, 1),
+                obj: Object.PowerSupplyControl,
+                data: new byte[] { 0x10, 0x10 }
+            );
+            var responseTelegram = sendTelegram(telegram);
+            return responseTelegram[3] == 0;
+        }
+
+        static bool EnableManualControl()
+        {
+            var telegram = Telegram(
+                sd: StartDelimiter(MessageType.Send, Direction.ToDevice, 1),
+                obj: Object.PowerSupplyControl,
+                data: new byte[] { 0x10, 0x00 }
+            );
+            var responseTelegram = sendTelegram(telegram);
+            return responseTelegram[3] == 0;
+        }
+
 
         private void set_voltage()
         {
@@ -107,7 +160,7 @@ namespace UI
             EnableRemoteControl();
 
             // 
-            float setVolt = float.Parse(textBox3.Text);
+            float setVolt = float.Parse(tbx_set_volt.Text);
             int percentSetValue = (int)Math.Round((25600 * setVolt) / 84);
             var (byte1, byte2) = CalculateSetValue(percentSetValue);
 
@@ -127,7 +180,7 @@ namespace UI
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btn_set_volt_Click(object sender, EventArgs e)
         {
             set_voltage();
         }
@@ -141,10 +194,15 @@ namespace UI
 
         private enum Object
         {
-            Status = 0x47,
-            PowerSupplyControl = 0x36,
+            DeviceType = 0x00,
             SerialNo = 0x01,
             NominalVoltage = 0x02,
+            NominalWatt = 0x04,
+            DeviceArticleNo = 0x06,
+            Manufacturer = 0x08,
+            SoftwareVersion = 0x09,
+            Status = 0x47,
+            PowerSupplyControl = 0x36,
             SetVoltage = 0x32
         }
 
@@ -272,18 +330,28 @@ namespace UI
             return (Convert.ToByte(hexValue1, 16), Convert.ToByte(hexValue2, 16));
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btn_get_volt_Click(object sender, EventArgs e)
         {
-            textBox4.Text = MessageType.Send.ToString();
+            tbx_get_volt.Text = MessageType.Send.ToString();
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        private void remote_control_CheckedChanged(object sender, EventArgs e)
         {
-            bool success = radioButton1.Checked ? EnableRemoteControl() : EnableManualControl();
-            if (!success)
-            {
-                radioButton1.Checked = !radioButton1.Checked;
-            }
+            //bool success = radioButton1.Checked ? EnableRemoteControl() : EnableManualControl();
+            //if (!success)
+            //{
+            //    radioButton1.Checked = !radioButton1.Checked;
+            //}
+        }
+
+        private void btn_get_watt_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btn_set_watt_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
