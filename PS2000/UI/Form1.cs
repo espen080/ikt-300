@@ -7,13 +7,19 @@ namespace UI
         public Form1()
         {
             InitializeComponent();
+
+            // Load device information
             LoadDeviceType();
-            //LoadSerialNumber();
-            //LoadNominalVoltage;
+            LoadSerialNumber();
+            LoadNominalVoltage();
             LoadNominalWatt();
             LoadArticeNo();
             LoadManufacturer();
             LoadSoftwareVersion();
+
+            // Enable remote control on startup
+            EnableRemoteControl();
+            rdi_remote_enabled.Checked = true;
 
         }
 
@@ -23,7 +29,9 @@ namespace UI
                 sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 15),
                 obj: Object.DeviceType
             );
-            tbx_device_type.Text = "device";
+            var responseTelegram = sendTelegram(telegram);
+
+            tbx_device_type.Text = EncodeResponse(responseTelegram);
         }
 
         void LoadSerialNumber()
@@ -34,23 +42,10 @@ namespace UI
             );
             var responseTelegram = sendTelegram(telegram);
 
-            string binary = Convert.ToString(responseTelegram[0], 2);
-            string payloadLengtBinaryString = binary.Substring(4);
-            int payloadLength = Convert.ToInt32(payloadLengtBinaryString, 2);
-            string serialNumberString = "";
-
-            if (responseTelegram[2] == 1) // means that I got a response on obj, which is refers to the object list.
-            {
-                for (var i = 0; i < payloadLength; i++)
-                {
-                    serialNumberString += Convert.ToChar(responseTelegram[3 + i]);
-                }
-            }
-
-            tbx_serialno.Text = serialNumberString;
+            tbx_serialno.Text = EncodeResponse(responseTelegram);
         }
 
-        void LoadNominalVoltage()
+        string GetVoltage()
         {
             double volt;
             int percentVolt = 0;
@@ -81,6 +76,29 @@ namespace UI
             float nominalVoltage = 0;
             if (voltageResponseTelegram == null)
             {
+                return "";
+            }
+            else
+            {
+                byte[] byteArray = { voltageResponseTelegram[6], voltageResponseTelegram[5], voltageResponseTelegram[4], voltageResponseTelegram[3] };
+                nominalVoltage = BitConverter.ToSingle(byteArray, 0);
+                volt = (double)percentVolt * nominalVoltage / 25600;
+                return volt.ToString();
+            }
+        }
+
+        void LoadNominalVoltage()
+        {
+            // get nominal voltage
+            var voltageTelegram = Telegram(
+                sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 3),
+                obj: Object.NominalVoltage
+            );
+            var voltageResponseTelegram = sendTelegram(voltageTelegram);
+
+            float nominalVoltage = 0;
+            if (voltageResponseTelegram == null)
+            {
                 Console.WriteLine("No telegram was read");
                 tbx_nom_volt.Text = "";
             }
@@ -88,8 +106,7 @@ namespace UI
             {
                 byte[] byteArray = { voltageResponseTelegram[6], voltageResponseTelegram[5], voltageResponseTelegram[4], voltageResponseTelegram[3] };
                 nominalVoltage = BitConverter.ToSingle(byteArray, 0);
-                volt = (double)percentVolt * nominalVoltage / 25600;
-                tbx_nom_volt.Text = volt.ToString();
+                tbx_nom_volt.Text = nominalVoltage.ToString();
             }
         }
 
@@ -99,7 +116,9 @@ namespace UI
                 sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 3),
                 obj: Object.NominalWatt
             );
-            tbx_nom_watt.Text = "watt";
+            var responseTelegram = sendTelegram(telegram);
+
+            tbx_nom_watt.Text = "Not implemented";
         }
 
         void LoadArticeNo()
@@ -108,7 +127,9 @@ namespace UI
                 sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 15),
                 obj: Object.DeviceArticleNo
             );
-            tbx_articleno.Text = "article";
+            var responseTelegram = sendTelegram(telegram);
+
+            tbx_articleno.Text = EncodeResponse(responseTelegram);
         }
 
         void LoadManufacturer()
@@ -117,7 +138,9 @@ namespace UI
                 sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 15),
                 obj: Object.Manufacturer
             );
-            tbx_manufacturer.Text = "manufacturer";
+            var responseTelegram = sendTelegram(telegram);
+
+            tbx_manufacturer.Text = EncodeResponse(responseTelegram);
         }
 
         void LoadSoftwareVersion()
@@ -126,7 +149,9 @@ namespace UI
                 sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 15),
                 obj: Object.SoftwareVersion
             );
-            tbx_version.Text = "sft version";
+            var responseTelegram = sendTelegram(telegram);
+
+            tbx_version.Text = EncodeResponse(responseTelegram);
         }
 
         static bool EnableRemoteControl()
@@ -136,6 +161,7 @@ namespace UI
                 obj: Object.PowerSupplyControl,
                 data: new byte[] { 0x10, 0x10 }
             );
+
             var responseTelegram = sendTelegram(telegram);
             return responseTelegram[3] == 0;
         }
@@ -177,8 +203,10 @@ namespace UI
         {
             // setting voltage
             // remember to turn on remote control first
-
-            EnableRemoteControl();
+            if (!rdi_remote_enabled.Checked) 
+            { 
+                rdi_remote_enabled.Checked = EnableRemoteControl();
+            }
 
             // 
             float setVolt = float.Parse(tbx_set_volt.Text);
@@ -186,7 +214,7 @@ namespace UI
             var (byte1, byte2) = CalculateSetValue(percentSetValue);
 
             var telegram = Telegram(
-                sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 5),
+                sd: StartDelimiter(MessageType.Send, Direction.ToDevice, 5),
                 obj: Object.SetVoltage,
                 data: new byte[] { byte1, byte2 }
             );
@@ -236,7 +264,7 @@ namespace UI
         static List<byte> sendTelegram(byte[] telegram)
         {
             List<byte> responseTelegram;
-            using (SerialPort port = new SerialPort("Com5", 115200, 0, 8, StopBits.One))
+            using (SerialPort port = new SerialPort("Com6", 115200, 0, 8, StopBits.One))
             {
                 Thread.Sleep(500);
                 port.Open();
@@ -353,16 +381,30 @@ namespace UI
 
         private void btn_get_volt_Click(object sender, EventArgs e)
         {
-            tbx_get_volt.Text = MessageType.Send.ToString();
+            tbx_get_volt.Text = GetVoltage();
+        }
+
+        private string EncodeResponse(List<byte> telegram)
+        {
+            string binary = Convert.ToString(telegram[0], 2);
+            string payloadLengtBinaryString = binary.Substring(4);
+            int payloadLength = Convert.ToInt32(payloadLengtBinaryString, 2);
+            string responseString = "";
+
+            for (var i = 0; i < payloadLength; i++)
+            {
+                responseString += Convert.ToChar(telegram[3 + i]);
+            }
+            return responseString;
         }
 
         private void remote_control_CheckedChanged(object sender, EventArgs e)
         {
-            //bool success = rdi_remote_enabled.Checked ? EnableRemoteControl() : EnableManualControl();
-            //if (!success)
-            //{
-                //rdi_remote_enabled.Checked = !rdi_remote_enabled.Checked;
-            //}
+            bool success = rdi_remote_enabled.Checked ? EnableRemoteControl() : EnableManualControl();
+            if (!success)
+            {
+                rdi_remote_enabled.Checked = !rdi_remote_enabled.Checked;
+            }
         }
 
         private void btn_get_watt_Click(object sender, EventArgs e)
@@ -377,11 +419,11 @@ namespace UI
 
         private void rdi_power_enabled_CheckedChanged(object sender, EventArgs e)
         {
-            //bool success = rdi_power_enabled.Checked ? EnablePowerOut() : DisablePowerOut();
-            //if (!success)
-            //{
-            //    rdi_power_enabled.Checked = !rdi_power_enabled.Checked;
-            //}
+            bool success = rdi_power_enabled.Checked ? EnablePowerOut() : DisablePowerOut();
+            if (!success)
+            {
+                rdi_power_enabled.Checked = !rdi_power_enabled.Checked;
+            }
         }
     }
 }
