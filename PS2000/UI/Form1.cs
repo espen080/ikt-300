@@ -4,12 +4,12 @@ namespace UI
 {
     public partial class Form1 : Form
     {
-        private Manager PSU;
+        private IManager PSU;
         public Form1()
         {
             InitializeComponent();
-            PSU = new Manager(tbx_port.Text);
-            if (PSU.IsConnected())
+            PSU = PSUManagerFactory.GetManager(tbx_port.Text);
+            if (PSU.TestComPort())
                 LoadPSU();
             
 

@@ -2,14 +2,14 @@
 
 namespace PSUManager
 {
-    public class Manager
+    internal class Manager : IManager
     {
         public Manager(string com_port)
         {
             ComPort = com_port;
         }
 
-        public bool IsConnected()
+        public bool TestComPort()
         {
             SerialPort port = new SerialPort(this.ComPort, 115200, 0, 8, StopBits.One);
             try
