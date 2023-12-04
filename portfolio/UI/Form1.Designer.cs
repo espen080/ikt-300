@@ -43,8 +43,8 @@
             this.gbx_power = new System.Windows.Forms.GroupBox();
             this.cbx_power_out = new System.Windows.Forms.CheckBox();
             this.gbx_com = new System.Windows.Forms.GroupBox();
-            this.lbl_port = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.lbl_port = new System.Windows.Forms.Label();
             this.grp_remote.SuspendLayout();
             this.grp_volt.SuspendLayout();
             this.grp_watt.SuspendLayout();
@@ -203,6 +203,14 @@
             this.gbx_com.TabStop = false;
             this.gbx_com.Text = "Power supply";
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(33, 20);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(278, 23);
+            this.comboBox1.TabIndex = 18;
+            // 
             // lbl_port
             // 
             this.lbl_port.AutoSize = true;
@@ -211,14 +219,6 @@
             this.lbl_port.Size = new System.Drawing.Size(21, 15);
             this.lbl_port.TabIndex = 17;
             this.lbl_port.Text = "ID:";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(33, 20);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(278, 23);
-            this.comboBox1.TabIndex = 18;
             // 
             // Form1
             // 
@@ -231,7 +231,7 @@
             this.Controls.Add(this.grp_volt);
             this.Controls.Add(this.grp_remote);
             this.Name = "Form1";
-            this.Text = "PS2000b";
+            this.Text = "Power supply system";
             this.grp_remote.ResumeLayout(false);
             this.grp_remote.PerformLayout();
             this.grp_volt.ResumeLayout(false);
