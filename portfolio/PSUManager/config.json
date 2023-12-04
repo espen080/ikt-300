@@ -1,0 +1,10 @@
+[
+  {
+    "Id": 1,
+    "ComPort": "Com6"
+  },
+  {
+    "Id": 2,
+    "ComPort": "Com7"
+  }
+]

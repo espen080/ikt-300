@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PSUManager
+namespace PSU
 {
     public static class PSUFactory
     { 
-        public static IPSU GetPSU(string type) { return new PS2000b(type); }
+        public static IPSU GetPSU(string comPort) { return new PS2000b(comPort); }
     }
 
     public interface IPSU

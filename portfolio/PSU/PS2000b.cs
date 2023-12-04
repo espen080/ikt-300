@@ -1,6 +1,6 @@
 ﻿using System.IO.Ports;
 
-namespace PSUManager
+namespace PSU
 {
     internal class PS2000b : IPSU
     {

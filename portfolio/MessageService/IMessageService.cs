@@ -8,12 +8,12 @@ namespace MessageService
 {
     public static class MessageServiceFactory
     {
-        public static IMessageService GetMessageService(string provider) 
+        public static IMessageService GetMessageService(string provider, string connectionString) 
         { 
             switch (provider.ToLower())
             {
                 case "mqtt":
-                    return new MQTT();
+                    return new MQTT(connectionString);
                 default:
                     return null;
             }
@@ -25,6 +25,6 @@ namespace MessageService
         public void Connect();
         public void Disconnect();
         public void Publish(string target, string message);
-        public void Subscribe(string target);
+        public void Subscribe(string target, Action<string> messageHandler);
     }
 }
