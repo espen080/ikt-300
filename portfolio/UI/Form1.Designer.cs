@@ -28,25 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lbl_serialno = new System.Windows.Forms.Label();
-            this.tbx_serialno = new System.Windows.Forms.TextBox();
-            this.lbl_nom_volt = new System.Windows.Forms.Label();
-            this.tbx_nom_volt = new System.Windows.Forms.TextBox();
             this.tbx_set_volt = new System.Windows.Forms.TextBox();
             this.btn_set_volt = new System.Windows.Forms.Button();
             this.tbx_get_volt = new System.Windows.Forms.TextBox();
             this.btn_get_volt = new System.Windows.Forms.Button();
-            this.tbx_nom_watt = new System.Windows.Forms.TextBox();
-            this.lbl_nom_watt = new System.Windows.Forms.Label();
-            this.tbx_device_type = new System.Windows.Forms.TextBox();
-            this.lbl_device_type = new System.Windows.Forms.Label();
-            this.tbx_articleno = new System.Windows.Forms.TextBox();
-            this.lbl_articleno = new System.Windows.Forms.Label();
-            this.tbx_manufacturer = new System.Windows.Forms.TextBox();
-            this.lbl_manufacturer = new System.Windows.Forms.Label();
-            this.tbx_version = new System.Windows.Forms.TextBox();
-            this.lbl_version = new System.Windows.Forms.Label();
-            this.grp_device_info = new System.Windows.Forms.GroupBox();
             this.grp_remote = new System.Windows.Forms.GroupBox();
             this.cbx_remote_control = new System.Windows.Forms.CheckBox();
             this.grp_volt = new System.Windows.Forms.GroupBox();
@@ -59,48 +44,13 @@
             this.cbx_power_out = new System.Windows.Forms.CheckBox();
             this.gbx_com = new System.Windows.Forms.GroupBox();
             this.lbl_port = new System.Windows.Forms.Label();
-            this.tbx_port = new System.Windows.Forms.TextBox();
-            this.grp_device_info.SuspendLayout();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.grp_remote.SuspendLayout();
             this.grp_volt.SuspendLayout();
             this.grp_watt.SuspendLayout();
             this.gbx_power.SuspendLayout();
             this.gbx_com.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lbl_serialno
-            // 
-            this.lbl_serialno.AutoSize = true;
-            this.lbl_serialno.Location = new System.Drawing.Point(75, 61);
-            this.lbl_serialno.Name = "lbl_serialno";
-            this.lbl_serialno.Size = new System.Drawing.Size(54, 15);
-            this.lbl_serialno.TabIndex = 0;
-            this.lbl_serialno.Text = "SerialNo:";
-            // 
-            // tbx_serialno
-            // 
-            this.tbx_serialno.Enabled = false;
-            this.tbx_serialno.Location = new System.Drawing.Point(135, 58);
-            this.tbx_serialno.Name = "tbx_serialno";
-            this.tbx_serialno.Size = new System.Drawing.Size(176, 23);
-            this.tbx_serialno.TabIndex = 1;
-            // 
-            // lbl_nom_volt
-            // 
-            this.lbl_nom_volt.AutoSize = true;
-            this.lbl_nom_volt.Location = new System.Drawing.Point(31, 90);
-            this.lbl_nom_volt.Name = "lbl_nom_volt";
-            this.lbl_nom_volt.Size = new System.Drawing.Size(98, 15);
-            this.lbl_nom_volt.TabIndex = 2;
-            this.lbl_nom_volt.Text = "Nominal voltage:";
-            // 
-            // tbx_nom_volt
-            // 
-            this.tbx_nom_volt.Enabled = false;
-            this.tbx_nom_volt.Location = new System.Drawing.Point(135, 87);
-            this.tbx_nom_volt.Name = "tbx_nom_volt";
-            this.tbx_nom_volt.Size = new System.Drawing.Size(176, 23);
-            this.tbx_nom_volt.TabIndex = 3;
             // 
             // tbx_set_volt
             // 
@@ -136,114 +86,6 @@
             this.btn_get_volt.Text = "Refresh";
             this.btn_get_volt.UseVisualStyleBackColor = true;
             this.btn_get_volt.Click += new System.EventHandler(this.btn_get_volt_Click);
-            // 
-            // tbx_nom_watt
-            // 
-            this.tbx_nom_watt.Enabled = false;
-            this.tbx_nom_watt.Location = new System.Drawing.Point(135, 116);
-            this.tbx_nom_watt.Name = "tbx_nom_watt";
-            this.tbx_nom_watt.Size = new System.Drawing.Size(176, 23);
-            this.tbx_nom_watt.TabIndex = 12;
-            // 
-            // lbl_nom_watt
-            // 
-            this.lbl_nom_watt.AutoSize = true;
-            this.lbl_nom_watt.Location = new System.Drawing.Point(47, 119);
-            this.lbl_nom_watt.Name = "lbl_nom_watt";
-            this.lbl_nom_watt.Size = new System.Drawing.Size(82, 15);
-            this.lbl_nom_watt.TabIndex = 11;
-            this.lbl_nom_watt.Text = "Nominal watt:";
-            // 
-            // tbx_device_type
-            // 
-            this.tbx_device_type.Enabled = false;
-            this.tbx_device_type.Location = new System.Drawing.Point(135, 29);
-            this.tbx_device_type.Name = "tbx_device_type";
-            this.tbx_device_type.Size = new System.Drawing.Size(176, 23);
-            this.tbx_device_type.TabIndex = 16;
-            // 
-            // lbl_device_type
-            // 
-            this.lbl_device_type.AutoSize = true;
-            this.lbl_device_type.Location = new System.Drawing.Point(58, 32);
-            this.lbl_device_type.Name = "lbl_device_type";
-            this.lbl_device_type.Size = new System.Drawing.Size(71, 15);
-            this.lbl_device_type.TabIndex = 15;
-            this.lbl_device_type.Text = "Device type:";
-            // 
-            // tbx_articleno
-            // 
-            this.tbx_articleno.Enabled = false;
-            this.tbx_articleno.Location = new System.Drawing.Point(135, 145);
-            this.tbx_articleno.Name = "tbx_articleno";
-            this.tbx_articleno.Size = new System.Drawing.Size(176, 23);
-            this.tbx_articleno.TabIndex = 18;
-            // 
-            // lbl_articleno
-            // 
-            this.lbl_articleno.AutoSize = true;
-            this.lbl_articleno.Location = new System.Drawing.Point(66, 148);
-            this.lbl_articleno.Name = "lbl_articleno";
-            this.lbl_articleno.Size = new System.Drawing.Size(63, 15);
-            this.lbl_articleno.TabIndex = 17;
-            this.lbl_articleno.Text = "Article No:";
-            // 
-            // tbx_manufacturer
-            // 
-            this.tbx_manufacturer.Enabled = false;
-            this.tbx_manufacturer.Location = new System.Drawing.Point(135, 174);
-            this.tbx_manufacturer.Name = "tbx_manufacturer";
-            this.tbx_manufacturer.Size = new System.Drawing.Size(176, 23);
-            this.tbx_manufacturer.TabIndex = 20;
-            // 
-            // lbl_manufacturer
-            // 
-            this.lbl_manufacturer.AutoSize = true;
-            this.lbl_manufacturer.Location = new System.Drawing.Point(47, 177);
-            this.lbl_manufacturer.Name = "lbl_manufacturer";
-            this.lbl_manufacturer.Size = new System.Drawing.Size(82, 15);
-            this.lbl_manufacturer.TabIndex = 19;
-            this.lbl_manufacturer.Text = "Manufacturer:";
-            // 
-            // tbx_version
-            // 
-            this.tbx_version.Enabled = false;
-            this.tbx_version.Location = new System.Drawing.Point(135, 203);
-            this.tbx_version.Name = "tbx_version";
-            this.tbx_version.Size = new System.Drawing.Size(176, 23);
-            this.tbx_version.TabIndex = 22;
-            // 
-            // lbl_version
-            // 
-            this.lbl_version.AutoSize = true;
-            this.lbl_version.Location = new System.Drawing.Point(32, 206);
-            this.lbl_version.Name = "lbl_version";
-            this.lbl_version.Size = new System.Drawing.Size(97, 15);
-            this.lbl_version.TabIndex = 21;
-            this.lbl_version.Text = "Software version:";
-            // 
-            // grp_device_info
-            // 
-            this.grp_device_info.Controls.Add(this.tbx_version);
-            this.grp_device_info.Controls.Add(this.lbl_device_type);
-            this.grp_device_info.Controls.Add(this.lbl_version);
-            this.grp_device_info.Controls.Add(this.tbx_device_type);
-            this.grp_device_info.Controls.Add(this.lbl_serialno);
-            this.grp_device_info.Controls.Add(this.tbx_manufacturer);
-            this.grp_device_info.Controls.Add(this.tbx_serialno);
-            this.grp_device_info.Controls.Add(this.lbl_manufacturer);
-            this.grp_device_info.Controls.Add(this.lbl_nom_volt);
-            this.grp_device_info.Controls.Add(this.tbx_articleno);
-            this.grp_device_info.Controls.Add(this.tbx_nom_volt);
-            this.grp_device_info.Controls.Add(this.lbl_articleno);
-            this.grp_device_info.Controls.Add(this.lbl_nom_watt);
-            this.grp_device_info.Controls.Add(this.tbx_nom_watt);
-            this.grp_device_info.Location = new System.Drawing.Point(12, 71);
-            this.grp_device_info.Name = "grp_device_info";
-            this.grp_device_info.Size = new System.Drawing.Size(335, 258);
-            this.grp_device_info.TabIndex = 23;
-            this.grp_device_info.TabStop = false;
-            this.grp_device_info.Text = "Device information";
             // 
             // grp_remote
             // 
@@ -352,32 +194,31 @@
             // 
             // gbx_com
             // 
+            this.gbx_com.Controls.Add(this.comboBox1);
             this.gbx_com.Controls.Add(this.lbl_port);
-            this.gbx_com.Controls.Add(this.tbx_port);
-            this.gbx_com.Location = new System.Drawing.Point(12, 13);
+            this.gbx_com.Location = new System.Drawing.Point(12, 129);
             this.gbx_com.Name = "gbx_com";
-            this.gbx_com.Size = new System.Drawing.Size(335, 49);
+            this.gbx_com.Size = new System.Drawing.Size(335, 59);
             this.gbx_com.TabIndex = 32;
             this.gbx_com.TabStop = false;
-            this.gbx_com.Text = "COM Port";
+            this.gbx_com.Text = "Power supply";
             // 
             // lbl_port
             // 
             this.lbl_port.AutoSize = true;
-            this.lbl_port.Location = new System.Drawing.Point(97, 23);
+            this.lbl_port.Location = new System.Drawing.Point(6, 23);
             this.lbl_port.Name = "lbl_port";
-            this.lbl_port.Size = new System.Drawing.Size(32, 15);
+            this.lbl_port.Size = new System.Drawing.Size(21, 15);
             this.lbl_port.TabIndex = 17;
-            this.lbl_port.Text = "Port:";
+            this.lbl_port.Text = "ID:";
             // 
-            // tbx_port
+            // comboBox1
             // 
-            this.tbx_port.Location = new System.Drawing.Point(135, 20);
-            this.tbx_port.Name = "tbx_port";
-            this.tbx_port.Size = new System.Drawing.Size(176, 23);
-            this.tbx_port.TabIndex = 18;
-            this.tbx_port.Text = "com6";
-            this.tbx_port.TextChanged += new System.EventHandler(this.tbx_port_TextChanged);
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(33, 20);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(278, 23);
+            this.comboBox1.TabIndex = 18;
             // 
             // Form1
             // 
@@ -389,11 +230,8 @@
             this.Controls.Add(this.grp_watt);
             this.Controls.Add(this.grp_volt);
             this.Controls.Add(this.grp_remote);
-            this.Controls.Add(this.grp_device_info);
             this.Name = "Form1";
             this.Text = "PS2000b";
-            this.grp_device_info.ResumeLayout(false);
-            this.grp_device_info.PerformLayout();
             this.grp_remote.ResumeLayout(false);
             this.grp_remote.PerformLayout();
             this.grp_volt.ResumeLayout(false);
@@ -409,26 +247,10 @@
         }
 
         #endregion
-
-        private Label lbl_serialno;
-        private TextBox tbx_serialno;
-        private TextBox tbx_nom_volt;
         private TextBox tbx_set_volt;
         private Button btn_set_volt;
         private TextBox tbx_get_volt;
         private Button btn_get_volt;
-        private TextBox tbx_nom_watt;
-        private Label lbl_nom_watt;
-        private Label lbl_nom_volt;
-        private TextBox tbx_device_type;
-        private Label lbl_device_type;
-        private TextBox tbx_articleno;
-        private Label lbl_articleno;
-        private TextBox tbx_manufacturer;
-        private Label lbl_manufacturer;
-        private TextBox tbx_version;
-        private Label lbl_version;
-        private GroupBox grp_device_info;
         private GroupBox grp_remote;
         private GroupBox grp_volt;
         private GroupBox grp_watt;
@@ -441,6 +263,6 @@
         private CheckBox cbx_power_out;
         private GroupBox gbx_com;
         private Label lbl_port;
-        private TextBox tbx_port;
+        private ComboBox comboBox1;
     }
 }

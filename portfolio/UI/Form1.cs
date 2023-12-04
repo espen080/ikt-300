@@ -4,11 +4,11 @@ namespace UI
 {
     public partial class Form1 : Form
     {
-        private IManager PSU;
+        private IPSU PSU;
         public Form1()
         {
             InitializeComponent();
-            PSU = PSUManagerFactory.GetManager(tbx_port.Text);
+            PSU = PSUFactory.GetPSU(tbx_port.Text);
             if (PSU.TestComPort())
                 LoadPSU();
             
@@ -27,7 +27,7 @@ namespace UI
             tbx_version.Text = PSU.GetSoftwareVersion();
 
             // Enable remote control on startup
-            PSU.EnableRemoteControl();
+            PSU.RemoteControlEnabled();
             cbx_remote_control.Checked = true;
 
             // Disable power out on startup
@@ -53,7 +53,7 @@ namespace UI
 
         private void remote_control_CheckedChanged(object sender, EventArgs e)
         {
-            bool success = cbx_remote_control.Checked ? PSU.EnableRemoteControl() : PSU.EnableManualControl();
+            bool success = cbx_remote_control.Checked ? PSU.RemoteControlEnabled() : PSU.DisableRemoteControl();
             if (!success)
             {
                 cbx_remote_control.Checked = !cbx_remote_control.Checked;
