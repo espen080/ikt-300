@@ -13,20 +13,24 @@ namespace UI
             messageService = MessageServiceFactory.GetMessageService("MQTT", "127.0.0.1");
             messageService.Connect(SubscriptionHandler);
             messageService.Subscribe("PSU/LIST");
-            messageService.Publish("PSU/CONNECT");
-           
         }
 
         private void SubscriptionHandler(string topic, string message)
         {
-            if(topic.ToLower() == "psu/list" && cbx_psu_id.Items.Count == 0)
+            if(topic.ToLower() == "psu/list")
             {
                 List<int>? iDs = JsonSerializer.Deserialize<List<int>>(message);
                 if (iDs == null) return;
-                foreach (int id in iDs)
-                {
-                    this.Invoke(delegate () { cbx_psu_id.Items.Add(id); });
-                }
+                this.Invoke(delegate () { 
+                    int selected = cbx_psu_id.SelectedIndex;
+                    cbx_psu_id.Items.Clear();
+                    foreach (int id in iDs)
+                    {
+                        cbx_psu_id.Items.Add(id);
+                    }
+                    cbx_psu_id.SelectedIndex = selected;
+                });
+
             }
         }
 

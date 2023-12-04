@@ -14,11 +14,12 @@ namespace PSUManager
         public Manager(IMessageService messageService, string configFilePath)
         {
             this.messageService = messageService;
-            this.messageService.Connect(SubscriptionCallback);
-            messageService.Subscribe("PSU/CONNECT");
+            this.messageService.Connect(SubscriptionCallback);;
             PSUs = new Dictionary<int, IPSU>();
             this.configFilePath = configFilePath;
             LoadConfig();
+            string psuList = JsonConvert.SerializeObject(PSUs.Keys.ToList());
+            messageService.Publish("PSU/LIST", psuList);
         }
 
         protected IMessageService messageService;
@@ -26,13 +27,9 @@ namespace PSUManager
 
         private void SubscriptionCallback(string topic, string message)
         {
-            if(topic.ToLower() == "psu/connect")
-            {
-                string psuList = JsonConvert.SerializeObject(PSUs.Keys.ToList());
-                messageService.Publish("PSU/LIST", psuList);
-            }
             Console.WriteLine(topic);
             Console.WriteLine(message);
+            // TODO: Add logic to handle PSU interactions
         }
 
         private string configFilePath;
