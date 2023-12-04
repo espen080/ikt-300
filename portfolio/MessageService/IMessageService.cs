@@ -22,9 +22,9 @@ namespace MessageService
 
     public interface IMessageService
     {
-        public void Connect();
+        public void Connect(Action<string, string> handler);
         public void Disconnect();
-        public void Publish(string target, string message);
-        public void Subscribe(string target, Action<string> messageHandler);
+        public void Publish(string target, string message = "");
+        public void Subscribe(string target);
     }
 }

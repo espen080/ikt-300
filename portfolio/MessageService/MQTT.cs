@@ -12,18 +12,30 @@ namespace MessageService
     {
         MqttClient? Client;
         string connectionString;
+        string ClientId;
 
         public MQTT(string connectionString)
         {
             this.connectionString = connectionString;
+            ClientId = Guid.NewGuid().ToString();
+            Client = new MqttClient(this.connectionString);
         }
-        public void Connect()
+        public void Connect(Action<string, string> handler)
         {
             try
             {
-                Client = new MqttClient(connectionString);
-                string clientID = Guid.NewGuid().ToString();
-                Client.Connect(clientID);
+                if(Client == null)
+                {
+                    return;
+                }
+                // Register a callback for received messages
+                Client.MqttMsgPublishReceived += (sender, e) =>
+                {
+                    string topic = e.Topic.ToString();
+                    string message = Encoding.UTF8.GetString(e.Message);
+                    handler(topic, message);
+                };
+                Client.Connect(ClientId);
 
             }
             catch (Exception ex)
@@ -38,21 +50,13 @@ namespace MessageService
         }
         public void Publish(string target, string message)
         {
-
+            Client?.Publish(target, Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, true);
         }
 
-        public void Subscribe(string target, Action<string> messageHandler)
+        public void Subscribe(string target)
         {
-            Console.WriteLine("Subscribing");
-            // Register a callback for received messages
-            Client.MqttMsgPublishReceived += (sender, e) =>
-            {
-                string receivedMsg = e.Topic.ToString();
-                Console.WriteLine(receivedMsg);
-                messageHandler(receivedMsg);
-            };
             // Subscribe to topic
-            Client.Subscribe(new string[] { target }, new byte[] { 2 });
+            Client?.Subscribe(new string[] { target }, new byte[] { 2 });
         }
     }
 }

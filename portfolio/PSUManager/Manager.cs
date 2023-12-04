@@ -11,20 +11,27 @@ namespace PSUManager
 {
     internal class Manager
     {
-        public Manager(string messageServiceProvider, string configFilePath)
+        public Manager(IMessageService messageService, string configFilePath)
         {
-            Console.WriteLine("Initializing manager");
-            messageService = MessageServiceFactory.GetMessageService(messageServiceProvider, "127.0.0.1");
+            this.messageService = messageService;
+            this.messageService.Connect(SubscriptionCallback);
+            messageService.Subscribe("PSU/CONNECT");
             PSUs = new Dictionary<int, IPSU>();
             this.configFilePath = configFilePath;
             LoadConfig();
         }
 
-        public IMessageService messageService;
-        public Dictionary<int, IPSU> PSUs;
+        protected IMessageService messageService;
+        protected Dictionary<int, IPSU> PSUs;
 
-        public void SubscriptionCallback(string message)
+        private void SubscriptionCallback(string topic, string message)
         {
+            if(topic.ToLower() == "psu/connect")
+            {
+                string psuList = JsonConvert.SerializeObject(PSUs.Keys.ToList());
+                messageService.Publish("PSU/LIST", psuList);
+            }
+            Console.WriteLine(topic);
             Console.WriteLine(message);
         }
 

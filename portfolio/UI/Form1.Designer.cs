@@ -43,7 +43,7 @@
             this.gbx_power = new System.Windows.Forms.GroupBox();
             this.cbx_power_out = new System.Windows.Forms.CheckBox();
             this.gbx_com = new System.Windows.Forms.GroupBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.cbx_psu_id = new System.Windows.Forms.ComboBox();
             this.lbl_port = new System.Windows.Forms.Label();
             this.grp_remote.SuspendLayout();
             this.grp_volt.SuspendLayout();
@@ -143,7 +143,6 @@
             this.btn_get_watt.TabIndex = 8;
             this.btn_get_watt.Text = "Refresh";
             this.btn_get_watt.UseVisualStyleBackColor = true;
-            this.btn_get_watt.Click += new System.EventHandler(this.btn_get_watt_Click);
             // 
             // tbx_set_watt
             // 
@@ -160,7 +159,6 @@
             this.btn_set_watt.TabIndex = 6;
             this.btn_set_watt.Text = "Apply";
             this.btn_set_watt.UseVisualStyleBackColor = true;
-            this.btn_set_watt.Click += new System.EventHandler(this.btn_set_watt_Click);
             // 
             // tbx_get_watt
             // 
@@ -194,7 +192,7 @@
             // 
             // gbx_com
             // 
-            this.gbx_com.Controls.Add(this.comboBox1);
+            this.gbx_com.Controls.Add(this.cbx_psu_id);
             this.gbx_com.Controls.Add(this.lbl_port);
             this.gbx_com.Location = new System.Drawing.Point(12, 129);
             this.gbx_com.Name = "gbx_com";
@@ -203,13 +201,14 @@
             this.gbx_com.TabStop = false;
             this.gbx_com.Text = "Power supply";
             // 
-            // comboBox1
+            // cbx_psu_id
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(33, 20);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(278, 23);
-            this.comboBox1.TabIndex = 18;
+            this.cbx_psu_id.FormattingEnabled = true;
+            this.cbx_psu_id.Location = new System.Drawing.Point(33, 20);
+            this.cbx_psu_id.Name = "cbx_psu_id";
+            this.cbx_psu_id.Size = new System.Drawing.Size(278, 23);
+            this.cbx_psu_id.TabIndex = 18;
+            this.cbx_psu_id.SelectedIndexChanged += new System.EventHandler(this.cbx_psu_id_SelectedIndexChanged);
             // 
             // lbl_port
             // 
@@ -263,6 +262,6 @@
         private CheckBox cbx_power_out;
         private GroupBox gbx_com;
         private Label lbl_port;
-        private ComboBox comboBox1;
+        private ComboBox cbx_psu_id;
     }
 }

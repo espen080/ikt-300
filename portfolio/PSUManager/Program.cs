@@ -1,11 +1,12 @@
 ﻿using PSUManager;
+using MessageService;
 
 
 Console.WriteLine("Starting PSU Manager");
 
-Manager manager = new Manager("MQTT", "config.json");
-manager.messageService.Connect();
-manager.messageService.Subscribe("PSU/CONNECT/#", manager.SubscriptionCallback);
+IMessageService messageService = MessageServiceFactory.GetMessageService("MQTT", "127.0.0.1");
+Manager manager = new Manager(messageService, "config.json");
+
 
 while(true)
 {
