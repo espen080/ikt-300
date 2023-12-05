@@ -9,7 +9,7 @@ namespace PSU
             ComPort = com_port;
         }
 
-        public bool TestComPort()
+        public bool IsValid()
         {
             SerialPort port = new SerialPort(this.ComPort, 115200, 0, 8, StopBits.One);
             try

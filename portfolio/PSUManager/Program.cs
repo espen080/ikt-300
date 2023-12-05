@@ -7,15 +7,10 @@ Console.WriteLine("Starting PSU Manager");
 IMessageService messageService = MessageServiceFactory.GetMessageService("MQTT", "127.0.0.1");
 Manager manager = new Manager(messageService, "config.json");
 
-
-Timer timer = new(Callback, manager, TimeSpan.Zero, TimeSpan.FromSeconds(5));
-while (true)
+Console.WriteLine("Press q to quit");
+while (Console.ReadLine() != "q")
 {
-
+    
 }
 
-static void Callback(object state)
-{
-    Manager manager = (Manager)state;
-    manager.Broadcast();
-}
+manager.Unload();

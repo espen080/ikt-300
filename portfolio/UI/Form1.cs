@@ -82,13 +82,14 @@ namespace UI
             {
                 messageService.Publish("PSU/FREQUENCY", frequency.ToString());
             }
+            btn_frequency.Enabled = true;
         }
 
         private void btn_set_voltage_Click(object sender, EventArgs e)
         {
             if (cbx_psu_id.SelectedIndex == -1)
                 return;
-            if (int.TryParse(tbx_set_voltage.Text, out int voltage))
+            if (float.TryParse(tbx_set_voltage.Text, out float voltage))
             {
                 messageService.Publish(baseTopic + "/VOLTAGE/SET", voltage.ToString());
             }
@@ -110,7 +111,8 @@ namespace UI
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            check_lock.Checked = !check_lock.Checked;
+            bool value = check_lock.Checked;
+            check_lock.Checked = value;
             if (cbx_psu_id.SelectedIndex == -1)
                 return;
             string message = check_lock.Checked ? "LOCK" : "UNLOCK";
@@ -130,6 +132,14 @@ namespace UI
             if (cbx_psu_id.SelectedIndex == -1)
                 return;
             messageService.Publish(baseTopic + "/STOP");
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (messageService != null)
+            {
+                messageService.Disconnect();
+            }
         }
     }
 }

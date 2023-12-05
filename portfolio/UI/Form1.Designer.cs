@@ -202,6 +202,7 @@
             // 
             // btn_frequency
             // 
+            this.btn_frequency.Enabled = false;
             this.btn_frequency.Location = new System.Drawing.Point(163, 118);
             this.btn_frequency.Name = "btn_frequency";
             this.btn_frequency.Size = new System.Drawing.Size(75, 23);
@@ -264,6 +265,7 @@
             this.Controls.Add(this.gbx_com);
             this.Name = "Form1";
             this.Text = "Power supply system";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.gbx_com.ResumeLayout(false);
             this.gbx_com.PerformLayout();
             this.groupBox1.ResumeLayout(false);

@@ -26,5 +26,10 @@ namespace PSU
         {
             return true;
         }
+
+        public bool IsValid()
+        {
+            return true;
+        }
     }
 }

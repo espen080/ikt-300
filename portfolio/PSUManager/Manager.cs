@@ -14,6 +14,7 @@ namespace PSUManager
         IMessageService messageService;
         Dictionary<int, IPSU> PSUs;
         List<int> BroadcastList;
+        Timer timer;
         string configFilePath;
         int frequency = 3;
 
@@ -23,22 +24,36 @@ namespace PSUManager
             this.messageService.Connect(SubscriptionCallback);;
             PSUs = new Dictionary<int, IPSU>();
             BroadcastList = new List<int>();
+            timer = new(Callback, this, TimeSpan.Zero, TimeSpan.FromSeconds(frequency));
             this.configFilePath = configFilePath;
-            LoadConfig();
+            var list = PSUFactory.GetPSUList();
+            for ( int i = 1; i <= list.Count; i++ )
+                PSUs.Add(i, list[i]);
+            //LoadConfig();
             string psuList = JsonConvert.SerializeObject(PSUs.Keys.ToList());
             messageService.Publish("PSU/LIST", psuList);
             messageService.Subscribe("PSU/+/#");
             messageService.Subscribe("PSU/FREQUENCY");
         }
 
-        public void Broadcast()
+        public void Unload()
+        {
+            messageService.Disconnect();
+            timer.Dispose();
+        }
+
+        void Broadcast()
         {
             Console.WriteLine("Updating PSU info");
             foreach ( int id in BroadcastList )
             {
                 GetCurrent(id);
             }
-            Thread.Sleep(frequency * 1000);
+        }
+        static void Callback(object? state)
+        {
+            Manager? manager = state as Manager;
+            manager?.Broadcast();
         }
 
         void SubscriptionCallback(string topic, string message)
@@ -46,6 +61,7 @@ namespace PSUManager
             if (topic.ToLower() == "psu/frequency")
             {
                 int.TryParse(message, out frequency);
+                timer.Change(0, frequency * 1000);
                 Console.WriteLine(string.Format("Frequency set to {0}", frequency));
                 return;
             }
@@ -112,6 +128,8 @@ namespace PSUManager
             if (!float.TryParse(message, out float voltage))
                 return;
             PSUs[id].SetVoltage(voltage);
+            GetCurrent(id);
+            GetVoltage(id);
             if (!BroadcastList.Contains(id))
             {
                 BroadcastList.Add(id);
@@ -146,7 +164,6 @@ namespace PSUManager
                 foreach (PSUConfig config in configList)
                 {
                     IPSU PSU = PSUFactory.GetPSU(
-                        type: config.Type,
                         comPort: config.ComPort
                     );
                     if (PSU != null)
@@ -155,7 +172,10 @@ namespace PSUManager
                     }
                 }
             }
+
         }
+
+
     }
 
     public class PSUConfig

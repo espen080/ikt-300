@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,17 +9,32 @@ namespace PSU
 {
     public static class PSUFactory
     { 
-        public static IPSU GetPSU(string type, string comPort) 
+        public static IPSU GetPSU(string comPort) 
         { 
-            switch (type.ToLower())
+            IPSU PSU = new PS2000b(comPort);
+            if( PSU.IsValid())
+                return PSU;
+
+            // Add more definitions as neccessary
+
+            // Use only for testing
+            PSU = new TestPSU();
+            if (PSU.IsValid())
+                return PSU;
+            return null;
+        }
+
+        public static List<IPSU> GetPSUList()
+        {
+            List<IPSU> list = new();
+            string[] comPorts = SerialPort.GetPortNames();
+            foreach (string comPort in comPorts)
             {
-                case "test":
-                    return new TestPSU();
-                case "ps2000b":
-                    return new PS2000b(comPort);
-                default:
-                    return null;
+                IPSU psu = GetPSU(comPort);
+                if (psu != null)
+                    list.Add(psu);
             }
+            return list;
         }
     }
 
@@ -28,5 +44,7 @@ namespace PSU
         public bool SetVoltage(float setVolt);
         public string GetCurrent();
         public bool RemoteControlEnabled(bool setEnabled);
+        public bool IsValid();
+
     }
 }

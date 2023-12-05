@@ -26,5 +26,6 @@ namespace MessageService
         public void Disconnect();
         public void Publish(string target, string message = "");
         public void Subscribe(string target);
+
     }
 }
