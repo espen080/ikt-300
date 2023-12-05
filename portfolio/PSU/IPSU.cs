@@ -17,22 +17,29 @@ namespace PSU
 
             // Add more definitions as neccessary
 
-            // Use only for testing
-            PSU = new TestPSU();
-            if (PSU.IsValid())
-                return PSU;
             return null;
         }
 
-        public static List<IPSU> GetPSUList()
+        static IPSU GetTestPSU()
         {
-            List<IPSU> list = new();
-            string[] comPorts = SerialPort.GetPortNames();
+            return new TestPSU();
+        }
+
+        public static Dictionary<string, IPSU> GetPSUs()
+        {
+            Dictionary<string, IPSU> list = new();
+            List<string> comPorts = SerialPort.GetPortNames().Distinct().ToList();
             foreach (string comPort in comPorts)
             {
                 IPSU psu = GetPSU(comPort);
                 if (psu != null)
-                    list.Add(psu);
+                    list.Add(psu.GetName(), psu);
+            }
+            if ( list.Count == 0)
+            {
+                Console.WriteLine("Warning: No PSUs detected, adding test stub PSU");
+                IPSU psu = GetTestPSU();
+                list.Add(psu.GetName(), psu);
             }
             return list;
         }
@@ -45,6 +52,7 @@ namespace PSU
         public string GetCurrent();
         public bool RemoteControlEnabled(bool setEnabled);
         public bool IsValid();
+        public string GetName();
 
     }
 }

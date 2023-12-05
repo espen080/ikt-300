@@ -13,33 +13,52 @@ namespace PSUManager
     {
         IMessageService messageService;
         Dictionary<int, IPSU> PSUs;
+        Dictionary<string, int> PSUIds;
         List<int> BroadcastList;
-        Timer timer;
+        Timer BroadcastTimer;
+        Timer PSUTimer;
         string configFilePath;
         int frequency = 3;
+        static int DefaultId = 1;
 
         public Manager(IMessageService messageService, string configFilePath)
         {
+            // Initialize members
+            this.configFilePath = configFilePath;
             this.messageService = messageService;
             this.messageService.Connect(SubscriptionCallback);;
             PSUs = new Dictionary<int, IPSU>();
+            PSUIds = new Dictionary<string, int>();
             BroadcastList = new List<int>();
-            timer = new(Callback, this, TimeSpan.Zero, TimeSpan.FromSeconds(frequency));
-            this.configFilePath = configFilePath;
-            var list = PSUFactory.GetPSUList();
-            for ( int i = 1; i <= list.Count; i++ )
-                PSUs.Add(i, list[i]);
-            //LoadConfig();
+            
+            
+            LoadConfig();
+            
+            
+            var list = PSUFactory.GetPSUs();
+            foreach(var serialNo in list.Keys)
+            {
+                if (PSUIds.ContainsKey(serialNo))
+                    PSUs.Add(PSUIds[serialNo], list[serialNo]);
+                else
+                    PSUs.Add(PSUIds.Values.Max()+ DefaultId++, list[serialNo]);
+            }
+
+
             string psuList = JsonConvert.SerializeObject(PSUs.Keys.ToList());
             messageService.Publish("PSU/LIST", psuList);
             messageService.Subscribe("PSU/+/#");
             messageService.Subscribe("PSU/FREQUENCY");
+
+            BroadcastTimer = new(BroadcastCallback, this, TimeSpan.Zero, TimeSpan.FromSeconds(frequency));
+            PSUTimer = new(ValidatorCallback, this, TimeSpan.Zero, TimeSpan.FromSeconds(60));
         }
 
         public void Unload()
         {
             messageService.Disconnect();
-            timer.Dispose();
+            BroadcastTimer.Dispose();
+            PSUTimer.Dispose();
         }
 
         void Broadcast()
@@ -50,10 +69,25 @@ namespace PSUManager
                 GetCurrent(id);
             }
         }
-        static void Callback(object? state)
+
+        void ValidatePSUs()
+        {
+            foreach( int id in PSUs.Keys )
+            {
+                if (!PSUs[id].IsValid())
+                    PSUs.Remove(id);
+            }
+
+        }
+        static void BroadcastCallback(object? state)
         {
             Manager? manager = state as Manager;
             manager?.Broadcast();
+        }
+        static void ValidatorCallback(object? state)
+        {
+            Manager? manager = state as Manager;
+            manager?.ValidatePSUs();
         }
 
         void SubscriptionCallback(string topic, string message)
@@ -61,7 +95,7 @@ namespace PSUManager
             if (topic.ToLower() == "psu/frequency")
             {
                 int.TryParse(message, out frequency);
-                timer.Change(0, frequency * 1000);
+                BroadcastTimer.Change(0, frequency * 1000);
                 Console.WriteLine(string.Format("Frequency set to {0}", frequency));
                 return;
             }
@@ -152,7 +186,7 @@ namespace PSUManager
             if (this.configFilePath == null)
                 return;
 
-            PSUs.Clear();
+            PSUIds.Clear();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
 
@@ -163,13 +197,7 @@ namespace PSUManager
             {
                 foreach (PSUConfig config in configList)
                 {
-                    IPSU PSU = PSUFactory.GetPSU(
-                        comPort: config.ComPort
-                    );
-                    if (PSU != null)
-                    {
-                        PSUs.Add(config.Id, PSU);
-                    }
+                    PSUIds.Add(config.SerialNo, config.Id);
                 }
             }
 
@@ -181,7 +209,6 @@ namespace PSUManager
     public class PSUConfig
     {
         public int Id;
-        public string ComPort = String.Empty;
-        public string Type = String.Empty;
+        public string SerialNo;
     }
 }

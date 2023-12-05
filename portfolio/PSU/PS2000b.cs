@@ -23,6 +23,11 @@ namespace PSU
             }
         }
 
+        public string GetName()
+        {
+            return GetSerialNumber();
+        }
+
         public string ComPort { get; set; }
 
         public string GetDeviceType()
