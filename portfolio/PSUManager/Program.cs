@@ -8,7 +8,14 @@ IMessageService messageService = MessageServiceFactory.GetMessageService("MQTT",
 Manager manager = new Manager(messageService, "config.json");
 
 
-while(true)
+Timer timer = new(Callback, manager, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+while (true)
 {
-    // Run PSU management here
+
+}
+
+static void Callback(object state)
+{
+    Manager manager = (Manager)state;
+    manager.Broadcast();
 }

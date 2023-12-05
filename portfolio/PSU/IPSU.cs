@@ -8,7 +8,18 @@ namespace PSU
 {
     public static class PSUFactory
     { 
-        public static IPSU GetPSU(string comPort) { return new PS2000b(comPort); }
+        public static IPSU GetPSU(string type, string comPort) 
+        { 
+            switch (type.ToLower())
+            {
+                case "test":
+                    return new TestPSU();
+                case "ps2000b":
+                    return new PS2000b(comPort);
+                default:
+                    return null;
+            }
+        }
     }
 
     public interface IPSU

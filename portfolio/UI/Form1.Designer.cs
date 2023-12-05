@@ -216,7 +216,7 @@
             this.tbx_frequency.Name = "tbx_frequency";
             this.tbx_frequency.Size = new System.Drawing.Size(151, 23);
             this.tbx_frequency.TabIndex = 4;
-            this.tbx_frequency.Text = "30";
+            this.tbx_frequency.Text = "3";
             // 
             // label4
             // 

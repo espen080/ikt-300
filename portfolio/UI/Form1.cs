@@ -30,7 +30,33 @@ namespace UI
                     }
                     cbx_psu_id.SelectedIndex = selected;
                 });
+                return;
+            }
 
+            string[] topics = topic.Split("/");
+            switch (topics[3].ToLower())
+            {
+                case "current":
+                    this.Invoke(delegate () {tbx_get_current.Text = message; });
+                    break;
+                case "status":
+                    this.Invoke(delegate () {
+                        bool isLocked = message.ToLower() == "lock" ? true : false;
+                        check_lock.Checked = isLocked;
+                    });
+                    break;
+                case "voltage":
+                    this.Invoke(delegate () { tbx_get_voltage.Text = message; });
+                    break;
+                case "stop":
+                    this.Invoke(delegate () { 
+                        tbx_get_voltage.Text = "";
+                        tbx_get_current.Text = "";
+                        tbx_set_voltage.Text = "";
+                    });
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -41,6 +67,9 @@ namespace UI
             baseTopic = string.Format("PSU/{0}", Id);
             string topic = baseTopic + "/SERVER/#";
             messageService.Subscribe(topic);
+            tbx_get_current.Text = "";
+            tbx_get_voltage.Text = "";
+            tbx_set_voltage.Text = "";
         }
 
         private void btn_connect_Click(object sender, EventArgs e)
@@ -51,7 +80,7 @@ namespace UI
             messageService.Subscribe("PSU/LIST");
             if (int.TryParse(tbx_frequency.Text, out int frequency))
             {
-                messageService.Publish("PSU/FREQUECY", frequency.ToString());
+                messageService.Publish("PSU/FREQUENCY", frequency.ToString());
             }
         }
 
@@ -81,6 +110,7 @@ namespace UI
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
+            check_lock.Checked = !check_lock.Checked;
             if (cbx_psu_id.SelectedIndex == -1)
                 return;
             string message = check_lock.Checked ? "LOCK" : "UNLOCK";
@@ -91,7 +121,7 @@ namespace UI
         {
             if (int.TryParse(tbx_frequency.Text, out int frequency))
             {
-                messageService.Publish("PSU/FREQUECY", frequency.ToString());
+                messageService.Publish("PSU/FREQUENCY", frequency.ToString());
             }
         }
 

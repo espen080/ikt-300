@@ -50,7 +50,7 @@ namespace MessageService
         }
         public void Publish(string target, string message)
         {
-            Client?.Publish(target, Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, true);
+            Client?.Publish(target, Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, true);
         }
 
         public void Subscribe(string target)
