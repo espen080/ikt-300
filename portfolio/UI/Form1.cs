@@ -5,8 +5,9 @@ namespace UI
 {
     public partial class Form1 : Form
     {
-        private IMessageService messageService;
-        private int Id;
+        IMessageService messageService;
+        string Id;
+        string baseTopic;
 
         public Form1()
         {
@@ -36,7 +37,10 @@ namespace UI
 
         private void cbx_psu_id_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Id = cbx_psu_id.SelectedIndex;
+            Id = cbx_psu_id.SelectedItem.ToString();
+            baseTopic = string.Format("PSU/{0}", Id);
+            string topic = baseTopic + "/SERVER/#";
+            messageService.Subscribe(topic);
         }
 
         private void btn_connect_Click(object sender, EventArgs e)
@@ -45,11 +49,57 @@ namespace UI
             messageService = MessageServiceFactory.GetMessageService("MQTT", hostname);
             messageService.Connect(SubscriptionHandler);
             messageService.Subscribe("PSU/LIST");
+            if (int.TryParse(tbx_frequency.Text, out int frequency))
+            {
+                messageService.Publish("PSU/FREQUECY", frequency.ToString());
+            }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void btn_set_voltage_Click(object sender, EventArgs e)
         {
+            if (cbx_psu_id.SelectedIndex == -1)
+                return;
+            if (int.TryParse(tbx_set_voltage.Text, out int voltage))
+            {
+                messageService.Publish(baseTopic + "/VOLTAGE/SET", voltage.ToString());
+            }
+        }
 
+        private void btn_get_voltage_Click(object sender, EventArgs e)
+        {
+            if (cbx_psu_id.SelectedIndex == -1)
+                return;
+            messageService.Publish(baseTopic + "/VOLTAGE/GET");
+        }
+
+        private void btn_get_current_Click(object sender, EventArgs e)
+        {
+            if (cbx_psu_id.SelectedIndex == -1)
+                return;
+            messageService.Publish(baseTopic + "/CURRENT/GET");
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbx_psu_id.SelectedIndex == -1)
+                return;
+            string message = check_lock.Checked ? "LOCK" : "UNLOCK";
+            messageService.Publish(baseTopic + "/STATUS", message);
+        }
+
+        private void btn_frequency_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(tbx_frequency.Text, out int frequency))
+            {
+                messageService.Publish("PSU/FREQUECY", frequency.ToString());
+            }
+        }
+
+        private void btn_stop_Click(object sender, EventArgs e)
+        {
+            if (cbx_psu_id.SelectedIndex == -1)
+                return;
+            messageService.Publish(baseTopic + "/STOP");
         }
     }
 }
