@@ -9,7 +9,7 @@ namespace PSU
     internal class TestPSU: IPSU
     {
         float voltage = 0;
-        static int id = 0;
+
         public string GetVoltage()
         {
             return voltage.ToString();
@@ -35,7 +35,7 @@ namespace PSU
 
         public string GetName()
         {
-            return string.Format("TestPSU_{0}", id++);
+            return "TestPSU_1";
         }
     }
 }

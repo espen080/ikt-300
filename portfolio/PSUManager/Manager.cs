@@ -13,45 +13,38 @@ namespace PSUManager
     {
         IMessageService messageService;
         Dictionary<int, IPSU> PSUs;
-        Dictionary<string, int> PSUIds;
+        Dictionary<string, int> PSUIdMap;
         List<int> BroadcastList;
         Timer BroadcastTimer;
         Timer PSUTimer;
         string configFilePath;
         int frequency = 3;
-        static int DefaultId = 1;
 
         public Manager(IMessageService messageService, string configFilePath)
         {
             // Initialize members
             this.configFilePath = configFilePath;
             this.messageService = messageService;
-            this.messageService.Connect(SubscriptionCallback);;
             PSUs = new Dictionary<int, IPSU>();
-            PSUIds = new Dictionary<string, int>();
+            PSUIdMap = new Dictionary<string, int>();
             BroadcastList = new List<int>();
             
+            // Load PSU id config file
+            LoadIdMapping();
             
-            LoadConfig();
-            
-            
-            var list = PSUFactory.GetPSUs();
-            foreach(var serialNo in list.Keys)
-            {
-                if (PSUIds.ContainsKey(serialNo))
-                    PSUs.Add(PSUIds[serialNo], list[serialNo]);
-                else
-                    PSUs.Add(PSUIds.Values.Max()+ DefaultId++, list[serialNo]);
-            }
+            // Load connected PSUs
+            LoadPSUs();
 
+            // Configure timed callbacks
+            BroadcastTimer = new(BroadcastCallback, this, TimeSpan.Zero, TimeSpan.FromSeconds(frequency));
+            PSUTimer = new(LoadPSUCallback, this, TimeSpan.Zero, TimeSpan.FromSeconds(300));
 
+            // Configure message service
+            this.messageService.Connect(SubscriptionCallback);
             string psuList = JsonConvert.SerializeObject(PSUs.Keys.ToList());
             messageService.Publish("PSU/LIST", psuList);
             messageService.Subscribe("PSU/+/#");
             messageService.Subscribe("PSU/FREQUENCY");
-
-            BroadcastTimer = new(BroadcastCallback, this, TimeSpan.Zero, TimeSpan.FromSeconds(frequency));
-            PSUTimer = new(ValidatorCallback, this, TimeSpan.Zero, TimeSpan.FromSeconds(60));
         }
 
         public void Unload()
@@ -63,31 +56,22 @@ namespace PSUManager
 
         void Broadcast()
         {
-            Console.WriteLine("Updating PSU info");
             foreach ( int id in BroadcastList )
             {
                 GetCurrent(id);
             }
         }
 
-        void ValidatePSUs()
-        {
-            foreach( int id in PSUs.Keys )
-            {
-                if (!PSUs[id].IsValid())
-                    PSUs.Remove(id);
-            }
 
-        }
         static void BroadcastCallback(object? state)
         {
             Manager? manager = state as Manager;
             manager?.Broadcast();
         }
-        static void ValidatorCallback(object? state)
+        static void LoadPSUCallback(object? state)
         {
             Manager? manager = state as Manager;
-            manager?.ValidatePSUs();
+            manager?.LoadPSUs();
         }
 
         void SubscriptionCallback(string topic, string message)
@@ -181,12 +165,33 @@ namespace PSUManager
                 );
         }
 
-        void LoadConfig()
+        void LoadPSUs()
+        {
+            var list = PSUFactory.GetPSUs();
+            foreach (var name in list.Keys)
+            {
+                if (!PSUIdMap.ContainsKey(name))
+                {
+                    Console.WriteLine(String.Format("WARNING! Encountered unmapped PSU {0} update config.json to connect", name));
+                    continue;                    
+                }
+                if (!PSUs.ContainsKey(PSUIdMap[name]))
+                    PSUs.Add(PSUIdMap[name], list[name]);
+            }
+            foreach ( int id in PSUs.Keys)
+            {
+                if (!PSUs[id].IsValid())
+                    PSUs.Remove(id);
+            }
+
+        }
+
+        void LoadIdMapping()
         {
             if (this.configFilePath == null)
                 return;
 
-            PSUIds.Clear();
+            PSUIdMap.Clear();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
 
@@ -197,7 +202,7 @@ namespace PSUManager
             {
                 foreach (PSUConfig config in configList)
                 {
-                    PSUIds.Add(config.SerialNo, config.Id);
+                    PSUIdMap.Add(config.Name, config.Id);
                 }
             }
 
@@ -209,6 +214,6 @@ namespace PSUManager
     public class PSUConfig
     {
         public int Id;
-        public string SerialNo;
+        public string Name;
     }
 }

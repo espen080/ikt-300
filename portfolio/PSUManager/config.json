@@ -1,6 +1,10 @@
 [
   {
     "Id": 1,
-    "SerialNo":  "TestPSU_0"
+    "Name": "TestPSU_1"
+  },
+  {
+    "Id": 2,
+    "Name": "TestPSU_0"
   }
 ]
