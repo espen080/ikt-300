@@ -1,15 +1,15 @@
 ﻿using System.IO.Ports;
 
-namespace PSUManager
+namespace PSU
 {
-    internal class Manager : IManager
+    internal class PS2000b : IPSU
     {
-        public Manager(string com_port)
+        public PS2000b(string com_port)
         {
             ComPort = com_port;
         }
 
-        public bool TestComPort()
+        public bool IsValid()
         {
             SerialPort port = new SerialPort(this.ComPort, 115200, 0, 8, StopBits.One);
             try
@@ -21,6 +21,11 @@ namespace PSUManager
             {
                 return false;
             }
+        }
+
+        public string GetName()
+        {
+            return GetSerialNumber();
         }
 
         public string ComPort { get; set; }
@@ -66,6 +71,47 @@ namespace PSUManager
                 byte[] byteArray = { voltageResponseTelegram[6], voltageResponseTelegram[5], voltageResponseTelegram[4], voltageResponseTelegram[3] };
                 nominalVoltage = BitConverter.ToSingle(byteArray, 0);
                 return nominalVoltage.ToString();
+            }
+        }
+
+        public string GetCurrent()
+        {
+            double current;
+            int percentCurrent = 0;
+
+            // get voltage
+            var statusTelegram = Telegram(
+                sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 5),
+                obj: Object.Status
+            );
+            var statusResponseTelegram = sendTelegram(statusTelegram);
+            if (statusResponseTelegram == null)
+            {
+                Console.WriteLine("No telegram was read");
+            }
+            else
+            {
+                string percentCurrentString = statusResponseTelegram[7].ToString("X") + statusResponseTelegram[8].ToString("X");
+                percentCurrent = Convert.ToInt32(percentCurrentString, 16);
+            }
+
+            // get nominal current
+            var currentTelegram = Telegram(
+                sd: StartDelimiter(MessageType.Query, Direction.ToDevice, 3),
+                obj: Object.NominalCurrent
+            );
+            var currentResponseTelegram = sendTelegram(currentTelegram);
+
+            if (currentResponseTelegram == null)
+            {
+                return "";
+            }
+            else
+            {
+                byte[] byteArray = { currentResponseTelegram[6], currentResponseTelegram[5], currentResponseTelegram[4], currentResponseTelegram[3] };
+                float nominalCurrent = BitConverter.ToSingle(byteArray, 0);
+                current = (double)percentCurrent * nominalCurrent / 25600;
+                return Math.Round(current, 2).ToString();
             }
         }
 
@@ -154,19 +200,20 @@ namespace PSUManager
             return EncodeResponse(responseTelegram);
         }
 
-        public bool EnableRemoteControl()
+        public bool RemoteControlEnabled(bool setEnabled)
         {
+            int enabledHex = setEnabled ? 0x10 : 0x00;
             var telegram = Telegram(
                 sd: StartDelimiter(MessageType.Send, Direction.ToDevice, 1),
                 obj: Object.PowerSupplyControl,
-                data: new byte[] { 0x10, 0x10 }
+                data: new byte[] { 0x10, (byte)enabledHex }
             );
 
             var responseTelegram = sendTelegram(telegram);
             return responseTelegram[3] == 0;
         }
 
-        public bool EnableManualControl()
+        public bool DisableRemoteControl()
         {
             var telegram = Telegram(
                 sd: StartDelimiter(MessageType.Send, Direction.ToDevice, 1),
@@ -227,6 +274,7 @@ namespace PSUManager
             DeviceType = 0x00,
             SerialNo = 0x01,
             NominalVoltage = 0x02,
+            NominalCurrent = 0x03,
             NominalWatt = 0x04,
             DeviceArticleNo = 0x06,
             Manufacturer = 0x08,
