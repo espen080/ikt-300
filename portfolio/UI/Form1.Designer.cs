@@ -265,7 +265,7 @@
             this.Controls.Add(this.gbx_com);
             this.Name = "Form1";
             this.Text = "Power supply system";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PowerSuplyUI_FormClosing);
             this.gbx_com.ResumeLayout(false);
             this.gbx_com.PerformLayout();
             this.groupBox1.ResumeLayout(false);
