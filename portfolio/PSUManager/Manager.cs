@@ -62,12 +62,12 @@ namespace PSUManager
             }
         }
 
-
         static void BroadcastCallback(object? state)
         {
             Manager? manager = state as Manager;
             manager?.Broadcast();
         }
+
         static void LoadPSUCallback(object? state)
         {
             Manager? manager = state as Manager;
@@ -93,7 +93,7 @@ namespace PSUManager
             switch(topics[2].ToLower())
             {
                 case "stop":
-                    shutdown(id);
+                    Shutdown(id);
                     break;
                 case "voltage":
                     if (topics[3].ToLower() == "get")
@@ -112,7 +112,7 @@ namespace PSUManager
             }
         }
 
-        void shutdown(int id)
+        void Shutdown(int id)
         {
             Console.WriteLine(String.Format("Shutting down psu {0}", id));
             PSUs[id].SetVoltage(0);

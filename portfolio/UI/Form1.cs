@@ -3,13 +3,13 @@ using System.Text.Json;
 
 namespace UI
 {
-    public partial class Form1 : Form
+    public partial class PowerSupplyUI : Form
     {
-        IMessageService messageService;
-        string Id;
-        string baseTopic;
+        IMessageService? messageService;
+        string? Id;
+        string? baseTopic;
 
-        public Form1()
+        public PowerSupplyUI()
         {
             InitializeComponent();
             
@@ -60,13 +60,12 @@ namespace UI
             }
         }
 
-
         private void cbx_psu_id_SelectedIndexChanged(object sender, EventArgs e)
         {
             Id = cbx_psu_id.SelectedItem.ToString();
             baseTopic = string.Format("PSU/{0}", Id);
             string topic = baseTopic + "/SERVER/#";
-            messageService.Subscribe(topic);
+            messageService?.Subscribe(topic);
             tbx_get_current.Text = "";
             tbx_get_voltage.Text = "";
             tbx_set_voltage.Text = "";
@@ -91,7 +90,7 @@ namespace UI
                 return;
             if (float.TryParse(tbx_set_voltage.Text, out float voltage))
             {
-                messageService.Publish(baseTopic + "/VOLTAGE/SET", voltage.ToString());
+                messageService?.Publish(baseTopic + "/VOLTAGE/SET", voltage.ToString());
             }
         }
 
@@ -99,31 +98,31 @@ namespace UI
         {
             if (cbx_psu_id.SelectedIndex == -1)
                 return;
-            messageService.Publish(baseTopic + "/VOLTAGE/GET");
+            messageService?.Publish(baseTopic + "/VOLTAGE/GET");
         }
 
         private void btn_get_current_Click(object sender, EventArgs e)
         {
             if (cbx_psu_id.SelectedIndex == -1)
                 return;
-            messageService.Publish(baseTopic + "/CURRENT/GET");
+            messageService?.Publish(baseTopic + "/CURRENT/GET");
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void check_lock_CheckedChanged(object sender, EventArgs e)
         {
             bool value = check_lock.Checked;
             check_lock.Checked = value;
             if (cbx_psu_id.SelectedIndex == -1)
                 return;
             string message = check_lock.Checked ? "LOCK" : "UNLOCK";
-            messageService.Publish(baseTopic + "/STATUS", message);
+            messageService?.Publish(baseTopic + "/STATUS", message);
         }
 
         private void btn_frequency_Click(object sender, EventArgs e)
         {
             if (int.TryParse(tbx_frequency.Text, out int frequency))
             {
-                messageService.Publish("PSU/FREQUENCY", frequency.ToString());
+                messageService?.Publish("PSU/FREQUENCY", frequency.ToString());
             }
         }
 
@@ -131,10 +130,10 @@ namespace UI
         {
             if (cbx_psu_id.SelectedIndex == -1)
                 return;
-            messageService.Publish(baseTopic + "/STOP");
+            messageService?.Publish(baseTopic + "/STOP");
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void PowerSuplyUI_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (messageService != null)
             {

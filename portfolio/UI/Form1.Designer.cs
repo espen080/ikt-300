@@ -1,6 +1,6 @@
 ﻿namespace UI
 {
-    partial class Form1
+    partial class PowerSupplyUI
     {
         /// <summary>
         ///  Required designer variable.
@@ -84,7 +84,7 @@
             this.check_lock.TabIndex = 31;
             this.check_lock.Text = "Locked";
             this.check_lock.UseVisualStyleBackColor = true;
-            this.check_lock.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.check_lock.CheckedChanged += new System.EventHandler(this.check_lock_CheckedChanged);
             // 
             // btn_stop
             // 
@@ -265,7 +265,7 @@
             this.Controls.Add(this.gbx_com);
             this.Name = "Form1";
             this.Text = "Power supply system";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormClosing);
             this.gbx_com.ResumeLayout(false);
             this.gbx_com.PerformLayout();
             this.groupBox1.ResumeLayout(false);
